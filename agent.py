@@ -143,7 +143,10 @@ while True:
         record_audio(audio_file)
         transcription = transcribe_audio(audio_file)
         if transcription:
-            store_transcription_in_memory(transcription)
+            #store_transcription_in_memory(transcription)
+            tts_pipeline(agent.chat(transcription))
+
+        
 
     elif message == "exit":
         break

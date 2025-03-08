@@ -159,9 +159,9 @@ def store_transcription_in_memory(text):
     index.add(embedding)  # Store in FAISS
     print("Stored in Memory Module:", text)
 
-# Test
-audio_file = "recorded_audio.wav"
-record_audio(audio_file)
-transcription = transcribe_audio(audio_file)
-if transcription:
-    store_transcription_in_memory(transcription)
+# # Test
+# audio_file = "recorded_audio.wav"
+# record_audio(audio_file)
+# transcription = transcribe_audio(audio_file)
+# if transcription:
+#     store_transcription_in_memory(transcription)
