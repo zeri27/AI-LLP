@@ -9,7 +9,7 @@ from memory.Tokeniser_module import get_tokeniser
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 import os
-
+from TTS.TTS_module import tts_pipeline
 
 from memory.Memory_module import search, add_to_index, create_index, save_chat_to_memory
 
