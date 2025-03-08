@@ -13,8 +13,12 @@ from TTS.TTS_module import tts_pipeline
 
 from memory.Memory_module import search, add_to_index, create_index, save_chat_to_memory
 
-from LLM_module import create_agent
+from NLP.LLM_module import create_agent
 from memory.Memory_module import save_index, load_index, save_reference, load_reference
+
+from ASR.ASR_module import record_audio, transcribe_audio, store_transcription_in_memory
+
+
 
 
 class Agent:
@@ -131,10 +135,22 @@ tools = [agent.fetch_From_Memory, agent.save_data_to_memory]
 
 
 while True:
+
     message = input("Enter a message: ")
-    print(agent.chat(message))
-    if message == "exit":
+
+    if message == "record":
+        audio_file = "recorded_audio.wav"
+        record_audio(audio_file)
+        transcription = transcribe_audio(audio_file)
+        if transcription:
+            store_transcription_in_memory(transcription)
+
+    elif message == "exit":
         break
+
+    else:
+        tts_pipeline(agent.chat(message))
+    
 
 agent.convert_short_to_long_memory()
 
