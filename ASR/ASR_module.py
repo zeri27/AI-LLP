@@ -4,8 +4,11 @@ import torch
 import sounddevice as sd
 import numpy as np
 import wave
+import librosa
+import noisereduce as nr
 from transformers import AutoTokenizer, AutoModel
 from sentence_transformers import SentenceTransformer
+import soundfile as sf
 from ASR.AER_module import predict_emotion
 
 # Load Whisper model (using 'small' for efficiency)
@@ -37,22 +40,32 @@ def record_audio(filename, duration=10, samplerate=16000):
         wf.setframerate(samplerate)
         wf.writeframes(audio_data.tobytes())
 
-def transcribe_audio(audio_path):
-
-    emotion = predict_emotion(audio_path)
-
-    
+def reduce_noise(input_audio, output_audio):
     """
-    Transcribes speech from an audio file using Whisper ASR.
+    Applies noise reduction to an audio file and saves the cleaned version.
+    Args:
+        input_audio (str): Path to the input noisy audio file.
+        output_audio (str): Path to save the cleaned audio file.
+    """
+    y, sr = librosa.load(input_audio, sr=None)
+    reduced_noise = nr.reduce_noise(y=y, sr=sr)
+    sf.write(output_audio, reduced_noise, sr)
+    return output_audio
+
+def transcribe_audio(audio_path):
+    """
+    Transcribes speech from an audio file using Whisper ASR after noise reduction.
     Args:
         audio_path (str): Path to the audio file.
     Returns:
         str: Transcribed text.
     """
-    result = asr_model.transcribe(audio_path)
+    emotion = predict_emotion(audio_path)
+
+    cleaned_audio = reduce_noise(audio_path, "cleaned_audio.wav")
+    result = asr_model.transcribe(cleaned_audio)
 
     result = "<PREDICTED EMOTION = " + emotion + "> " + result["text"]
-
     return result
 
 def store_transcription_in_memory(text):
