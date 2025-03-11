@@ -8,7 +8,7 @@ from langchain.memory import ConversationBufferMemory
 from memory.Memory_module import search
 
 
-
+# creates an agent with access to tools and memory. This still needs a lot of prompt engineering, hence the many commented out parts
 def create_agent(tools, memory, llm_model_name="llama3.1"):
     #use langchain agents for an integration of tool calling into the llm
     agents_llm = ChatOllama(model=llm_model_name, temperature=1.0)
@@ -79,13 +79,13 @@ Always **maintain a friendly and encouraging tone** to make learning enjoyable. 
 
 
 
-        MessagesPlaceholder("chat_history"),
+        MessagesPlaceholder("chat_history"), # this is where the chat history will be inserted
         ("user", "{input}"),
         MessagesPlaceholder("agent_scratchpad")
     ])
 
     agent = create_tool_calling_agent(llm_with_tools, tools, prompt)
     # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, memory=memory)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, memory=memory) #TODO remove verbose=True when done testing
 
     return agent_executor

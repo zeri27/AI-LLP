@@ -103,9 +103,3 @@ def tts_pipeline(transcript):
     play_thread.start()
     synth_thread.join()
     play_thread.join()
-
-
-# if __name__ == "__main__":
-#     text_input = "Hello, this is a test. 你好，这是一个测试。I love pancakes! 再见？"
-#     print("Running TTS pipeline...")
-#     tts_pipeline(text_input)

@@ -16,36 +16,37 @@ from memory.Memory_module import search, add_to_index, create_index, save_chat_t
 from NLP.LLM_module import create_agent
 from memory.Memory_module import save_index, load_index, save_reference, load_reference
 
-from ASR.ASR_module import record_audio, transcribe_audio, store_transcription_in_memory
+from ASR.ASR_module import record_audio, transcribe_audio
 
 
 
-
+# main agent class. 
 class Agent:
     def __init__(self, llm_model_name = "llama3.1", embed_model_name = "sentence-transformers/all-MiniLM-L6-v2", index_path = None):
-        if index_path is not None:
+        if index_path is not None: # load the memory if it exists
             newpath = "long_term_memory/" + index_path
             self.stored_memory = load_reference(newpath)
             self.index = load_index(newpath)
-        else:
+        else: # create a new memory
             self.stored_memory = []
             self.index = create_index(384)
+        #store the models and tokeniser
         self.embedding_model = get_model(embed_model_name)
         self.tokeniser = get_tokeniser(embed_model_name)
         self.llm_model_name = llm_model_name
+        #create the short term memory
         self.short_term_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        #define the tools that the llm can call
         self.tools = [
             Tool(name="fetch_From_Memory", func=self.fetch_From_Memory, description=self.fetch_From_Memory.__doc__),
             Tool(name="save_data_to_memory", func=self.save_data_to_memory, description=self.save_data_to_memory.__doc__)
         ]
+        #create the agent
         self.agent = create_agent(self.tools, llm_model_name=self.llm_model_name, memory=self.short_term_memory)
-        #self.agent = create_agent([], self.short_term_memory, llm_model_name=self.llm_model_name)
         
 
 
-
-    #create tool that can be called by the llm to fetch data from memory
-    
+    #tool that can be called by the llm to fetch data from memory
     def fetch_From_Memory(self, query):
         """
         Fetch data from memory that can be used to generate a response to the user. don't call the tool with json data.
@@ -88,7 +89,6 @@ class Agent:
         return information
     
     #create tool that can be called by the llm to store data in memory
-    
     def save_data_to_memory(self, data : str):
         """
         Save data to memory that can be fetched later to generate a response to the user.  don't call the tool with json data.
@@ -99,20 +99,18 @@ class Agent:
         add_to_index(data, self.index, self.stored_memory, self.tokeniser, self.embedding_model)
 
 
-    # def invoke(self, input):
-    #     result = self.agent.invoke({"input": input})
-    #     return result["output"]
-
+    #send message to the agent and get a response
     def chat(self, input):
         result = self.agent.invoke({"input": input})
         return result["output"]
     
-
+    #save the memory to the drive
     def save_index(self, path):
         path = "long_term_memory/" + path
         save_index(self.index, path)
         save_reference(self.stored_memory, path)
 
+    #convert the short term memory to long term memory
     def convert_short_to_long_memory(self):
         #create a list of strings from the buffer
         chat = []
@@ -125,36 +123,39 @@ class Agent:
         save_chat_to_memory(chat, self.index, self.stored_memory, self.tokeniser, self.embedding_model)
 
 
-if os.path.exists("long_term_memory/jordy.index"):
-    agent = Agent(index_path="jordy")
+#check if a long term memory exists for the user "user"
+if os.path.exists("long_term_memory/user.index"):
+    agent = Agent(index_path="user")
 else:
     agent = Agent()
-#agent = Agent()
+
+#set the tools that the agent can use
 tools = [agent.fetch_From_Memory, agent.save_data_to_memory]
 
 
-
+#prompt loop
 while True:
-
+    #prompt the user for a message
     message = input("Enter a message: ")
-
+    #to record audio, type "record", later this will be a button in the UI
     if message == "record":
         audio_file = "recorded_audio.wav"
         record_audio(audio_file)
         transcription = transcribe_audio(audio_file)
         if transcription:
-            #store_transcription_in_memory(transcription)
             tts_pipeline(agent.chat(transcription))
 
         
-
+    #to exit the loop, type "exit"
     elif message == "exit":
         break
 
     else:
+        #if not exit or record, just send the message as text
         tts_pipeline(agent.chat(message))
     
-
+#after the loop, convert the short term memory to long term memory
 agent.convert_short_to_long_memory()
 
-agent.save_index("jordy")
+#and save the long term memory to the drive
+agent.save_index("user")

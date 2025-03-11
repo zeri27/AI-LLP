@@ -1,13 +1,16 @@
+#imports
 from transformers import AutoModelForAudioClassification, AutoFeatureExtractor
 import librosa
 import torch
 import numpy as np
 
+# Load model and feature extractor for emotion recognition
 model_id = "firdhokk/speech-emotion-recognition-with-openai-whisper-large-v3"
 model = AutoModelForAudioClassification.from_pretrained(model_id)
 feature_extractor = AutoFeatureExtractor.from_pretrained(model_id, do_normalize=True)
 id2label = model.config.id2label
 
+# function for preprocessing audio. This function loads the audio file, truncates it to a maximum duration, and extracts features using the feature extractor.
 def preprocess_audio(audio_path, feature_extractor, max_duration=30.0):
     audio_array, sampling_rate = librosa.load(audio_path, sr=feature_extractor.sampling_rate)
 
@@ -26,6 +29,7 @@ def preprocess_audio(audio_path, feature_extractor, max_duration=30.0):
     )
     return inputs
 
+# function for predicting emotion from an audio file. after preprocessing the audio, the function feeds the inputs to the model and returns the predicted emotion label.
 def predict_emotion(audio_path, max_duration=30.0):
     inputs = preprocess_audio(audio_path, feature_extractor, max_duration)
 
@@ -41,6 +45,3 @@ def predict_emotion(audio_path, max_duration=30.0):
     predicted_label = id2label[predicted_id]
 
     return predicted_label
-
-# emotion = predict_emotion("audio.wav")
-# print(emotion)
