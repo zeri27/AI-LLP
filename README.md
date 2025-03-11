@@ -5,7 +5,7 @@ When having any trouble with running the code, please contact one of us for assi
 - Yizhen Zang tmedcz@outlook.com
 - Liwia Padowska liwia.padowska@gmail.com
 - Jordy del Castilho jordydelcastilho@gmail.com
-- Zeryab Alam 
+- Zeryab Alam zeryabalam272@icloud.com
 
 ## Introduction
 
