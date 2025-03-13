@@ -125,9 +125,9 @@ class Agent:
 
 #check if a long term memory exists for the user "user"
 if os.path.exists("long_term_memory/user.index"):
-    agent = Agent(index_path="user")
+    agent = Agent(index_path="user", llm_model_name="google/gemma-3-4b-it")
 else:
-    agent = Agent()
+    agent = Agent("google/gemma-3-4b-it")
 
 #set the tools that the agent can use
 tools = [agent.fetch_From_Memory, agent.save_data_to_memory]

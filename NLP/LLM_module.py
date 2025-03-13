@@ -1,19 +1,110 @@
-from langchain_ollama import ChatOllama
 from langchain.agents import create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import tool
 from langchain.agents import AgentExecutor
 from langchain.memory import ConversationBufferMemory
 
+from transformers import AutoModelForCausalLM, AutoTokenizer, Gemma3ForConditionalGeneration
+
 from memory.Memory_module import search
+from langchain_huggingface import HuggingFacePipeline
+from transformers import pipeline
+import torch
+from transformers import AutoProcessor
+
+
+
+
+from langchain.llms.base import LLM
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from typing import Any, List, Optional
+
+
+from langchain.llms.base import LLM
+from typing import List, Optional
+
+from pydantic import PrivateAttr
+from langchain.llms.base import LLM
+
+class Gemma3LLM(LLM):
+    _model: Any = PrivateAttr()
+    _processor: Any = PrivateAttr()
+
+    def __init__(self, model, processor, **kwargs):
+        super().__init__(**kwargs)
+        self._model = model
+        self._processor = processor
+
+    @property
+    def _llm_type(self) -> str:
+        return "gemma3"
+
+    def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
+        messages = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "You are a helpful assistant."}]
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": prompt}]
+            }
+        ]
+
+        inputs = self._processor.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=True,
+            return_dict=True, return_tensors="pt"
+        ).to(self._model.device, dtype=torch.bfloat16)
+
+        input_len = inputs["input_ids"].shape[-1]
+
+        with torch.inference_mode():
+            generation = self._model.generate(**inputs, max_new_tokens=200, do_sample=False)
+            generation = generation[0][input_len:]
+
+        decoded = self._processor.decode(generation, skip_special_tokens=True)
+        return decoded
+
+
 
 
 # creates an agent with access to tools and memory. This still needs a lot of prompt engineering, hence the many commented out parts
 def create_agent(tools, memory, llm_model_name="llama3.1"):
     #use langchain agents for an integration of tool calling into the llm
-    agents_llm = ChatOllama(model=llm_model_name, temperature=1.0)
 
-    llm_with_tools = agents_llm.bind_tools(tools)
+    # model = Gemma3ForConditionalGeneration.from_pretrained(
+    #     llm_model_name,
+    #     use_safetensors=True
+    # ).eval()
+
+    # # agents_llm = HuggingFace(model=model, tokenizer=tokenizer)
+
+    # agents_llm = HuggingFacePipeline.from_model_id(
+    #     model_id=llm_model_name,
+    #     device="cuda"
+    # )
+
+
+    # pipe = pipeline(
+    #     "image-text-to-text",
+    #     model="google/gemma-3-4b-it",
+    #     device="cuda" if torch.cuda.is_available() else "cpu",
+    #     torch_dtype=torch.bfloat16
+    # )
+
+    # # Create an instance of the custom Gemma3LLM
+    # gemma_llm = Gemma3LLM_class(pipeline=pipe)
+
+    model = Gemma3ForConditionalGeneration.from_pretrained(
+        llm_model_name,
+    ).eval()
+
+    processor = AutoProcessor.from_pretrained(llm_model_name)
+    gemma_llm = Gemma3LLM(model=model, processor=processor)
+
+
+    #llm_with_tools = agents_llm.bind_tools(tools)
 
     prompt = ChatPromptTemplate.from_messages([
         # ("system", """YOU ARE A CONVERSATIONAL AGENT WHOSE TASK IT IS TO HELP PEOPLE WITH STUDYING LANGUAGES. 
@@ -84,8 +175,15 @@ Always **maintain a friendly and encouraging tone** to make learning enjoyable. 
         MessagesPlaceholder("agent_scratchpad")
     ])
 
-    agent = create_tool_calling_agent(llm_with_tools, tools, prompt)
+    agent = create_tool_calling_agent(gemma_llm, tools, prompt)
     # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, memory=memory) #TODO remove verbose=True when done testing
 
     return agent_executor
+
+
+
+
+
+
+
