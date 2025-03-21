@@ -1,14 +1,15 @@
-import whisper
 import faiss
 import torch
-import sounddevice as sd
 import numpy as np
 import wave
+import whisper
 import librosa
+import webrtcvad
+import soundfile as sf
+import sounddevice as sd
 import noisereduce as nr
 from transformers import AutoTokenizer, AutoModel
 from sentence_transformers import SentenceTransformer
-import soundfile as sf
 
 # Load Whisper model (using 'small' for efficiency)
 asr_model = whisper.load_model("small")
@@ -20,24 +21,40 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 embedding_dim = 384  # Must match MiniLM embedding size
 index = faiss.IndexFlatL2(embedding_dim)
 
-def record_audio(filename, duration=10, samplerate=16000):
+def record_audio(filename, sample_rate=16000, frame_duration_ms=30, silence_duration_ms=1500):
     """
-    Records audio from the microphone and saves it as a WAV file.
-    Args:
-        filename (str): Path to save the recorded audio.
-        duration (int): Duration of recording in seconds.
-        samplerate (int): Sampling rate for audio recording.
+    Voice-activated recording: Records when speech is detected and stops after silence.
     """
-    print("Recording...")
-    audio_data = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype=np.int16)
-    sd.wait()
-    print("Recording finished.")
-    
-    with wave.open(filename, "wb") as wf:
+    vad = webrtcvad.Vad(0)  # Aggressiveness: 0-3; higher is more aggressive
+    frame_size = int(sample_rate * frame_duration_ms / 1000)
+    silence_frames = int(silence_duration_ms / frame_duration_ms)
+    audio = []
+
+    print("Listening...")
+    silence_counter = 0
+    recording = False
+
+    with sd.InputStream(samplerate=sample_rate, channels=1, dtype='int16') as stream:
+        while True:
+            frame = stream.read(frame_size)[0]
+            is_speech = vad.is_speech(frame.tobytes(), sample_rate)
+            if is_speech:
+                audio.append(frame)
+                silence_counter = 0
+                recording = True
+            elif recording:
+                silence_counter += 1
+                audio.append(frame)
+                if silence_counter > silence_frames:
+                    print("Stopped listening due to silence.")
+                    break
+
+    # Save the recorded audio to file
+    with wave.open(filename, 'wb') as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
-        wf.setframerate(samplerate)
-        wf.writeframes(audio_data.tobytes())
+        wf.setframerate(sample_rate)
+        wf.writeframes(b''.join([f.tobytes() for f in audio]))
 
 def reduce_noise(input_audio, output_audio):
     """
