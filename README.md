@@ -45,10 +45,11 @@ The project comprises of several modules that work together:
 - sentence_transformers
 - librosa
 - noisereduce
+- webrtcvad
 
 
 ```bash
-pip install langchain transformers pytorch gtts pygame faiss-cpu langchain_ollama openai-whisper torchaudio sounddevice sentence_transformers librosa noisereduce
+pip install langchain transformers pytorch gtts pygame faiss-cpu langchain_ollama openai-whisper torchaudio sounddevice sentence_transformers librosa noisereduce webrtcvad
 ```
 
 
