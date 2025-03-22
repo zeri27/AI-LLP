@@ -13,7 +13,7 @@ asr_model = whisper.load_model("small")
 def listen_for_speech(sample_rate=16000, frame_duration_ms=30, silence_duration_ms=1500):
     """
     Continuously listens for speech and returns recorded audio when detected.
-    Stops recording after prolonged silence.
+    Stops recording after  'silence_duration_ms' of silence.
     """
     vad = webrtcvad.Vad(0)  # Moderate aggressiveness
     frame_size = int(sample_rate * frame_duration_ms / 1000)
@@ -76,7 +76,7 @@ def transcribe_audio(audio_path):
     return result["text"]
 
 # Test
-audio_bytes = listen_for_speech()
+audio_bytes = listen_for_speech(silence_duration_ms=2000) # Stop after 2 seconds of silence
 
 if audio_bytes:
     audio_file = "audio_recorded.wav"
