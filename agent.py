@@ -126,7 +126,7 @@ while True:
     print("\nWaiting for input (speak or type)...")
 
     # Listen for speech
-    audio_data = listen_for_speech()
+    audio_data = listen_for_speech(silence_duration_ms=2000) # Stop after 2 seconds of silence
     
     if audio_data:
         # Save to a temporary file
