@@ -22,23 +22,25 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 embedding_dim = 384  # Must match MiniLM embedding size
 index = faiss.IndexFlatL2(embedding_dim)
 
-def record_audio(filename, sample_rate=16000, frame_duration_ms=30, silence_duration_ms=1500):
+def listen_for_speech(sample_rate=16000, frame_duration_ms=30, silence_duration_ms=1500):
     """
-    Voice-activated recording: Records when speech is detected and stops after silence.
+    Continuously listens for speech and returns recorded audio when detected.
+    Stops recording after prolonged silence.
     """
-    vad = webrtcvad.Vad(0)  # Aggressiveness: 0-3; higher is more aggressive
+    vad = webrtcvad.Vad(1)  # Moderate aggressiveness
     frame_size = int(sample_rate * frame_duration_ms / 1000)
     silence_frames = int(silence_duration_ms / frame_duration_ms)
     audio = []
-
-    print("Listening...")
     silence_counter = 0
     recording = False
+
+    print("Listening for speech... (Speak anytime)")
 
     with sd.InputStream(samplerate=sample_rate, channels=1, dtype='int16') as stream:
         while True:
             frame = stream.read(frame_size)[0]
             is_speech = vad.is_speech(frame.tobytes(), sample_rate)
+
             if is_speech:
                 audio.append(frame)
                 silence_counter = 0
@@ -47,15 +49,19 @@ def record_audio(filename, sample_rate=16000, frame_duration_ms=30, silence_dura
                 silence_counter += 1
                 audio.append(frame)
                 if silence_counter > silence_frames:
-                    print("Stopped listening due to silence.")
+                    print("Stopped recording due to silence.")
                     break
 
-    # Save the recorded audio to file
+    if recording:
+        return b''.join([f.tobytes() for f in audio])  # Return raw audio bytes
+    return None
+
+def save_audio(audio_bytes, filename, sample_rate=16000):
     with wave.open(filename, 'wb') as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
         wf.setframerate(sample_rate)
-        wf.writeframes(b''.join([f.tobytes() for f in audio]))
+        wf.writeframes(audio_bytes)
 
 def reduce_noise(input_audio, output_audio):
     """
@@ -97,8 +103,8 @@ def store_transcription_in_memory(text):
     print("Stored in Memory Module:", text)
 
 # # Test
-# audio_file = "recorded_audio.wav"
-# record_audio(audio_file)
+# audio_file = "listen_for_speech.wav"
+# listen_for_speech(audio_file)
 # transcription = transcribe_audio(audio_file)
 # if transcription:
 #     store_transcription_in_memory(transcription)
