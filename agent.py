@@ -130,8 +130,8 @@ while True:
     
     if audio_data:
         # Save to a temporary file
-        audio_file = "recorded_audio.wav"
-        save_audio(audio_data, "recorded_audio.wav")
+        audio_file = "audio_recorded.wav"
+        save_audio(audio_data, "audio_recorded.wav")
         
         # Transcribe the speech
         transcription = transcribe_audio(audio_file)

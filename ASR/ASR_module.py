@@ -1,5 +1,3 @@
-import faiss
-import torch
 import numpy as np
 import wave
 import whisper
@@ -8,26 +6,17 @@ import webrtcvad
 import soundfile as sf
 import sounddevice as sd
 import noisereduce as nr
-from transformers import AutoTokenizer, AutoModel
-from sentence_transformers import SentenceTransformer
 from ASR.AER_module import predict_emotion
 
 # Load Whisper model (using 'small' for efficiency)
 asr_model = whisper.load_model("small")
-
-# Load embedding model for memory storage
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-
-# Initialize FAISS index for vector storage
-embedding_dim = 384  # Must match MiniLM embedding size
-index = faiss.IndexFlatL2(embedding_dim)
 
 def listen_for_speech(sample_rate=16000, frame_duration_ms=30, silence_duration_ms=1500):
     """
     Continuously listens for speech and returns recorded audio when detected.
     Stops recording after prolonged silence.
     """
-    vad = webrtcvad.Vad(1)  # Moderate aggressiveness
+    vad = webrtcvad.Vad(0)  # Moderate aggressiveness
     frame_size = int(sample_rate * frame_duration_ms / 1000)
     silence_frames = int(silence_duration_ms / frame_duration_ms)
     audio = []
@@ -49,7 +38,7 @@ def listen_for_speech(sample_rate=16000, frame_duration_ms=30, silence_duration_
                 silence_counter += 1
                 audio.append(frame)
                 if silence_counter > silence_frames:
-                    print("Stopped recording due to silence.")
+                    print("Stopped listening due to silence.")
                     break
 
     if recording:
@@ -85,26 +74,22 @@ def transcribe_audio(audio_path):
     """
     emotion = predict_emotion(audio_path)
 
-    cleaned_audio = reduce_noise(audio_path, "cleaned_audio.wav")
+    cleaned_audio = reduce_noise(audio_path, "audio_cleaned.wav")
     result = asr_model.transcribe(cleaned_audio)
 
-    result = "<PREDICTED EMOTION = " + emotion + "> " + result["text"]
+    result = "<Predicted Emotion = " + emotion + "> " + result["text"]
     return result
 
-def store_transcription_in_memory(text):
-    """
-    Converts transcribed text into an embedding and stores it in FAISS.
-    Args:
-        text (str): Transcribed speech text.
-    """
-    embedding = embedding_model.encode([text])
-    embedding = np.array(embedding).astype('float32')
-    index.add(embedding)  # Store in FAISS
-    print("Stored in Memory Module:", text)
-
 # # Test
-# audio_file = "listen_for_speech.wav"
-# listen_for_speech(audio_file)
-# transcription = transcribe_audio(audio_file)
-# if transcription:
-#     store_transcription_in_memory(transcription)
+# audio_bytes = listen_for_speech()
+
+# if audio_bytes:
+#     audio_file = "audio_recorded.wav"
+#     save_audio(audio_bytes, audio_file)
+    
+#     transcription = transcribe_audio(audio_file)
+#     print("\nTranscription Output:")
+#     print(transcription)
+
+# else:
+#     print("No speech detected. Please try again.")
