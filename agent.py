@@ -19,7 +19,7 @@ from ASR.ASR_module import listen_for_speech, transcribe_audio, save_audio
 
 
 class Agent:
-    def __init__(self, llm_model_name="llama3.1", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
+    def __init__(self, llm_model_name="qwq", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
                  index_path=None):
         if index_path is not None:
             newpath = "long_term_memory/" + index_path
@@ -119,8 +119,8 @@ class Agent:
         save_chat_to_memory(chat, self.index, self.stored_memory, self.tokeniser, self.embedding_model)
 
 
-if os.path.exists("long_term_memory/jordy.index"):
-    agent = Agent(index_path="jordy")
+if os.path.exists("long_term_memory/user.index"):
+    agent = Agent(index_path="user")
 else:
     agent = Agent()
 # agent = Agent()
@@ -132,37 +132,50 @@ from ASR.ASR_module import listen_for_speech, transcribe_audio
 
 async def pipeline():
     while True:
-        print("\nWaiting for input (speak or type)...")
+        
+        print("Press Enter to start talking, or type 'exit' to quit...\n")
+        x = input()
+        if x.lower() == "exit":
+            break
 
-        # Listen for speech
-        audio_data = listen_for_speech(silence_duration_ms=2000)  # Stop after 2 seconds of silence
-
-        if audio_data:
-            # Save to a temporary file
-            audio_file = "audio_recorded.wav"
-            save_audio(audio_data, "audio_recorded.wav")
-
-            # Transcribe the speech
-            transcription = transcribe_audio(audio_file)
-            if transcription:
-                response = agent.chat(transcription)
-                #tts_pipeline(response)
-                print(response)
-                await tts(response)
-
-
-        else:
-            # Fallback: Allow text input
-            message = input("Enter a message (or type 'exit' to quit): ")
-            if message.lower() == "exit":
-                break
-            response = agent.chat(message)
+        if x != "":
+            response = agent.chat(x)
             #tts_pipeline(response)
             print(response)
             await tts(response)
+        else:
+
+            print("\nWaiting for input (speak or type)...")
+
+            # Listen for speech
+            audio_data = listen_for_speech(silence_duration_ms=2000)  # Stop after 2 seconds of silence
+
+            if audio_data:
+                # Save to a temporary file
+                audio_file = "audio_recorded.wav"
+                save_audio(audio_data, "audio_recorded.wav")
+
+                # Transcribe the speech
+                transcription = transcribe_audio(audio_file)
+                if transcription:
+                    response = agent.chat(transcription)
+                    #tts_pipeline(response)
+                    print(response)
+                    await tts(response)
+
+
+            # else:
+            #     # Fallback: Allow text input
+            #     message = input("Enter a message (or type 'exit' to quit): ")
+            #     if message.lower() == "exit":
+            #         break
+            #     response = agent.chat(message)
+            #     #tts_pipeline(response)
+            #     print(response)
+            #     await tts(response)
 
     agent.convert_short_to_long_memory()
-    agent.save_index("jordy")
+    agent.save_index("user")
 
 
 asyncio.run(pipeline())
