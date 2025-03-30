@@ -10,7 +10,7 @@ from memory.Memory_module import search
 
 
 
-def create_agent(tools, memory, llm_model_name="mistral-nemo:latest"):
+def create_agent(tools, memory, llm_model_name="llama3.1"):
     #use langchain agents for an integration of tool calling into the llm
     #agents_llm = ChatOllama(model=llm_model_name, temperature=1.0)
     agents_llm = ChatOllama(model=llm_model_name, temperature=1.0)
@@ -96,6 +96,6 @@ def create_agent(tools, memory, llm_model_name="mistral-nemo:latest"):
 
     agent = create_tool_calling_agent(llm_with_tools, tools, prompt)
     # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    agent_executor = AgentExecutor(agent=agent, tools=tools)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False)
 
     return agent_executor
