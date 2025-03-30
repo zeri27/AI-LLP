@@ -19,7 +19,7 @@ from ASR.ASR_module import listen_for_speech, transcribe_audio, save_audio
 
 
 class Agent:
-    def __init__(self, llm_model_name="qwq", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
+    def __init__(self, llm_model_name="llama3.1", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
                  index_path=None):
         if index_path is not None:
             newpath = "long_term_memory/" + index_path
@@ -32,11 +32,7 @@ class Agent:
         self.tokeniser = get_tokeniser(embed_model_name)
         self.llm_model_name = llm_model_name
         self.short_term_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-        self.tools = [
-            Tool(name="fetch_From_Memory", func=self.fetch_From_Memory, description=self.fetch_From_Memory.__doc__),
-            Tool(name="save_data_to_memory", func=self.save_data_to_memory,
-                 description=self.save_data_to_memory.__doc__)
-        ]
+        self.tools = []
         self.agent = create_agent(self.tools, llm_model_name=self.llm_model_name, memory=self.short_term_memory)
         # self.agent = create_agent([], self.short_term_memory, llm_model_name=self.llm_model_name)
 
