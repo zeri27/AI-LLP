@@ -86,6 +86,6 @@ Always **maintain a friendly and encouraging tone** to make learning enjoyable. 
 
     agent = create_tool_calling_agent(llm_with_tools, tools, prompt)
     # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, memory=memory)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False, memory=memory)
 
     return agent_executor

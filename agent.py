@@ -19,7 +19,7 @@ from ASR.ASR_module import listen_for_speech, transcribe_audio, save_audio
 
 
 class Agent:
-    def __init__(self, llm_model_name="qwq", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
+    def __init__(self, llm_model_name="llama3.1", embed_model_name="sentence-transformers/all-MiniLM-L6-v2",
                  index_path=None):
         if index_path is not None:
             newpath = "long_term_memory/" + index_path
