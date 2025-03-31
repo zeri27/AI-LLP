@@ -1,4 +1,3 @@
-import numpy as np
 import wave
 import whisper
 import librosa
@@ -6,7 +5,6 @@ import webrtcvad
 import soundfile as sf
 import sounddevice as sd
 import noisereduce as nr
-from ASR.AER_module import predict_emotion
 
 # Load Whisper model (using 'small' for efficiency)
 asr_model = whisper.load_model("small")
@@ -72,13 +70,14 @@ def transcribe_audio(audio_path):
     Returns:
         str: Transcribed text.
     """
-    emotion = predict_emotion(audio_path)
+    # Emotion detection removed due to EU AI laws :(
+    # emotion = predict_emotion(audio_path)
 
     cleaned_audio = reduce_noise(audio_path, "audio_cleaned.wav")
     result = asr_model.transcribe(cleaned_audio)
 
-    result = "<Predicted Emotion = " + emotion + "> " + result["text"]
-    return result
+    # result = "<Predicted Emotion = " + emotion + "> " + result["text"]
+    return result["text"]
 
 # # Test
 # audio_bytes = listen_for_speech()

@@ -1,21 +1,16 @@
 import asyncio
 import os
-from langchain.agents import create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.tools import tool
-from langchain.agents import AgentExecutor
 from langchain.tools import Tool
 from langchain.memory import ConversationBufferMemory
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import HumanMessage, AIMessage
 
-from TTS.TTS_module_v2 import tts
-from memory.Embedder_module import get_model
-from memory.Tokeniser_module import get_tokeniser
-from NLP.LLM_module import create_agent
-from TTS.TTS_module import tts_pipeline
-from memory.Memory_module import search, add_to_index, create_index, save_chat_to_memory
-from memory.Memory_module import save_index, load_index, save_reference, load_reference
-from ASR.ASR_module import listen_for_speech, transcribe_audio, save_audio
+from src.TTS.TTS_module_v2 import tts
+from src.memory.Embedder_module import get_model
+from src.memory.Tokeniser_module import get_tokeniser
+from src.NLP.LLM_module import create_agent
+from src.memory.Memory_module import search, add_to_index, create_index, save_chat_to_memory
+from src.memory.Memory_module import save_index, load_index, save_reference, load_reference
+from src.ASR.ASR_module import save_audio
 
 
 class Agent:
@@ -126,8 +121,7 @@ else:
 # agent = Agent()
 tools = [agent.fetch_From_Memory, agent.save_data_to_memory]
 
-import wave
-from ASR.ASR_module import listen_for_speech, transcribe_audio
+from src.ASR.ASR_module import listen_for_speech, transcribe_audio
 
 
 async def pipeline():
@@ -152,8 +146,8 @@ async def pipeline():
 
             if audio_data:
                 # Save to a temporary file
-                audio_file = "audio_recorded.wav"
-                save_audio(audio_data, "audio_recorded.wav")
+                audio_file = "../audio_recorded.wav"
+                save_audio(audio_data, "../audio_recorded.wav")
 
                 # Transcribe the speech
                 transcription = transcribe_audio(audio_file)
