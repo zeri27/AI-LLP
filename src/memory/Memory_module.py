@@ -1,6 +1,6 @@
 import faiss
-from memory.Embedder_module import get_embeddings
-from memory.Tokeniser_module import get_tokenised_sections
+from src.memory.Embedder_module import get_embeddings
+from src.memory.Tokeniser_module import get_tokenised_sections
 import numpy as np
 
 save_chat_to_memory_method = "whole_chat" #options are "whole_chat", "individual_messages", "pairs"
