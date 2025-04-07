@@ -33,7 +33,7 @@ The project comprises of several modules that work together:
 
 
 - langchain
-- transformers==4.36.2
+- transformers
 - pytorch
 - gtts
 - pygame
@@ -50,7 +50,7 @@ The project comprises of several modules that work together:
 
 
 ```bash
-pip install transformers==4.36.2 langchain  torch gtts pygame faiss-cpu langchain_ollama openai-whisper torchaudio sounddevice sentence_transformers librosa noisereduce webrtcvad edge-tts
+pip install transformers==4.50.0 langchain==0.3.21  torch==2.6.0 gTTS==2.5.4 pygame faiss-cpu==1.10.0 langchain-ollama==0.3.0 openai-whisper==20240930 torchaudio==2.6.0 sounddevice==0.5.1 sentence-transformers==3.4.1 librosa==0.11.0 noisereduce==3.0.3 webrtcvad==2.0.10 edge-tts==7.0.0
 ```
 
 # How to run the code
