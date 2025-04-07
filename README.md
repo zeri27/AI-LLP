@@ -1,16 +1,17 @@
 # AI-LLP
-AI Language Learning Application for Conversational Agents Course TU Delft
+AI Language Learning Application for Conversational Agents Course at TU Delft. 
 
 When having any trouble with running the code, please contact one of us for assistance:
-- Yizhen Zang tmedcz@outlook.com
+- Yizhen Zang yizhenzang@tudelft.nl
 - Liwia Padowska liwia.padowska@gmail.com
 - Jordy del Castilho jordydelcastilho@gmail.com
 - Zeryab Alam zeryabalam272@icloud.com
 
-## Introduction
 
-This repository contains the code for a project developing a conversational agent that can help with learning languages. 
-The project comprises of several modules that work together:
+# Introduction
+
+This repository contains the code for a project developing a conversational agent that can help with language learning. 
+The project comprises several modules that work together:
 
 - ASR module for speech recognition
 - TTS module for text-to-speech
@@ -18,26 +19,23 @@ The project comprises of several modules that work together:
 - MEM module for memory
 
 
-
-
-# tools required
+# Tools required
 
 - FFMPEG  (https://www.gyan.dev/ffmpeg/builds/ for windows, https://www.ffmpeg.org/download.html for mac or linux)
-    make sure to add ffmpeg to environment variables after installing
+    Make sure to add ffmpeg to the environment variables after installing
 - Ollama (https://ollama.com/) 
-    make sure to pull the models you want to use. check your gpu's max memory to find the models that can be loaded onto your gpu
-- python 3.12 or higher (https://www.python.org/downloads/)
+    Make sure to pull the models you want to use. Check your GPU's max memory to find the models that can be loaded onto your GPU
+- Python 3.12 or higher (https://www.python.org/downloads/)
 
 
-# python packages
-
+# Python packages
 
 - langchain
 - transformers==4.36.2
 - pytorch
 - gtts
 - pygame
-- faiss-cpu (or faiss-gpu if you have a linux distribution that supports it)
+- faiss-cpu (or faiss-gpu if you have a Linux distribution that supports it)
 - langchain_ollama
 - openai-whisper
 - torchaudio
@@ -59,11 +57,9 @@ pip install transformers==4.36.2 langchain  torch gtts pygame faiss-cpu langchai
 
 2. Install the required packages
 
-3. move into the project directory
+3. Move into the project directory
 
-4. move to src
+4. Move to src
 
-5. run agent_run.py
-
-
+5. Run agent_run.py
 
