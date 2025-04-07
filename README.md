@@ -2,9 +2,9 @@
 AI Language Learning Application for Conversational Agents Course at TU Delft. 
 
 When having any trouble with running the code, please contact one of us for assistance:
-- Yizhen Zang yizhenzang@tudelft.nl
-- Liwia Padowska liwia.padowska@gmail.com
 - Jordy del Castilho jordydelcastilho@gmail.com
+- Liwia Padowska liwia.padowska@gmail.com
+- Yizhen Zang yizhenzang@tudelft.nl
 - Zeryab Alam zeryabalam272@icloud.com
 
 
@@ -46,20 +46,16 @@ The project comprises several modules that work together:
 - webrtcvad
 - edge_tts
 
-
 ```bash
 pip install transformers==4.36.2 langchain  torch gtts pygame faiss-cpu langchain_ollama openai-whisper torchaudio sounddevice sentence_transformers librosa noisereduce webrtcvad edge-tts
 ```
 
+
 # How to run the code
 
 1. Clone the repository
-
 2. Install the required packages
-
 3. Move into the project directory
-
 4. Move to src
-
 5. Run agent_run.py
 
