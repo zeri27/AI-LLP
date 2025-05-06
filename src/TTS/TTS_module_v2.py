@@ -1,4 +1,5 @@
 import os
+import re
 
 import edge_tts
 import asyncio
@@ -8,7 +9,8 @@ gen_text = 0
 
 async def tts(text):
     global gen_text
-    tts = edge_tts.Communicate(text, voice="zh-CN-XiaoxiaoNeural", rate='+15%', volume='-35%', pitch='-30Hz')
+    new_text = re.sub(r'[*\-_]', '', text)
+    tts = edge_tts.Communicate(new_text, voice="zh-CN-XiaoxiaoNeural", rate='+15%', volume='-35%', pitch='-30Hz')
     await tts.save(f"output{gen_text}.mp3")
 
     pygame.mixer.init()
