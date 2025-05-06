@@ -3,16 +3,12 @@
 **AI Language Learning Application**  
 *Developed for the DSAIT4065 Conversational Agents course at TU Delft.*
 
----
-
 ## 👥 Authors
 
 - **Jordy del Castilho** – jordydelcastilho@gmail.com  
 - **Liwia Padowska** – liwia.padowska@gmail.com  
 - **Yizhen Zang** – yizhenzang@tudelft.nl  
-- **Zeryab Alam** – zeryabalam272@icloud.com  
-
----
+- **Zeryab Alam** – zeryabalam272@icloud.com
 
 ## 🧠 Project Overview
 
@@ -26,8 +22,6 @@ AI-LLP is a conversational agent designed to assist with language learning. The 
 - **MEM (Memory)** – Keeps track of user interactions and context.
 
 The complete report detailing the design, methodology, and evaluation of this project is included in this repository.
-
----
 
 ## 🛠️ Installation & Setup
 
@@ -60,5 +54,3 @@ The complete report detailing the design, methodology, and evaluation of this pr
 
 1. Ensure a **stable internet connection** (especially for the TTS module — use version v1 if offline).
 2. Run the agent: ```python agent.py```
-
----
