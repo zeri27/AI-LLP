@@ -155,9 +155,9 @@ async def pipeline():
                 transcription = transcribe_audio(audio_file)
                 if transcription:
                     response = agent.chat(transcription)
-                    #tts_pipeline(response)
+                    #tts_pipeline(response) <--- Old version of TTS
                     print(response)
-                    await tts(response)
+                    await tts(response) #TTS_module_v2
 
 
             # else:
