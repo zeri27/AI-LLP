@@ -1,61 +1,64 @@
 # AI-LLP
-AI Language Learning Application for Conversational Agents Course at TU Delft. 
 
-When having any trouble with running the code, please contact one of us for assistance:
-- Jordy del Castilho jordydelcastilho@gmail.com
-- Liwia Padowska liwia.padowska@gmail.com
-- Yizhen Zang yizhenzang@tudelft.nl
-- Zeryab Alam zeryabalam272@icloud.com
+**AI Language Learning Application**  
+*Developed for the DSAIT4065 Conversational Agents course at TU Delft.*
 
+---
 
-# Introduction
+## 👥 Authors
 
-This repository contains the code for a project developing a conversational agent that can help with language learning. 
-The project comprises several modules that work together:
+- **Jordy del Castilho** – jordydelcastilho@gmail.com  
+- **Liwia Padowska** – liwia.padowska@gmail.com  
+- **Yizhen Zang** – yizhenzang@tudelft.nl  
+- **Zeryab Alam** – zeryabalam272@icloud.com  
 
-- ASR module for speech recognition
-- TTS module for text-to-speech
-- NLP module for natural language processing
-- MEM module for memory
+---
 
+## 🧠 Project Overview
 
-# Tools required
+AI-LLP is a conversational agent designed to assist with language learning. The system integrates multiple modules to simulate a realistic and helpful dialogue experience for learners.
 
-- FFMPEG  (https://www.gyan.dev/ffmpeg/builds/ for windows, https://www.ffmpeg.org/download.html for mac or linux)
-    Make sure to add ffmpeg to the environment variables after installing
-- Ollama (https://ollama.com/) 
-    Make sure to pull the models you want to use. Check your GPU's max memory to find the models that can be loaded onto your GPU
-- Python 3.12 or higher (https://www.python.org/downloads/)
+### 📦 Modules
 
+- **ASR (Automatic Speech Recognition)** – Converts spoken input to text.
+- **TTS (Text-to-Speech)** – Converts text responses into speech.
+- **NLP (Natural Language Processing)** – Understands and generates natural language responses.
+- **MEM (Memory)** – Keeps track of user interactions and context.
 
-# Python packages
+The complete report detailing the design, methodology, and evaluation of this project is included in this repository.
 
-- langchain
-- transformers
-- pytorch
-- gtts
-- pygame
-- faiss-cpu (or faiss-gpu if you have a Linux distribution that supports it)
-- langchain_ollama
-- openai-whisper
-- torchaudio
-- sounddevice
-- sentence_transformers
-- librosa
-- noisereduce
-- webrtcvad
-- edge_tts
+---
 
-```bash
-pip install transformers==4.50.0 langchain==0.3.21  torch==2.6.0 gTTS==2.5.4 pygame faiss-cpu==1.10.0 langchain-ollama==0.3.0 openai-whisper==20240930 torchaudio==2.6.0 sounddevice==0.5.1 sentence-transformers==3.4.1 librosa==0.11.0 noisereduce==3.0.3 webrtcvad==2.0.10 edge-tts==7.0.0
-```
+## 🛠️ Installation & Setup
 
+### ✅ Prerequisites
 
-# How to run the code
+- **Python 3.10+**  
+  [Download Python](https://www.python.org/downloads/) – tested primarily on Python 3.10.
 
-1. Clone the repository
-2. Install the required packages
-3. Move into the project directory
-4. Move to src
-5. Run agent_run.py
+- **FFmpeg**  
+  - [Windows builds](https://www.gyan.dev/ffmpeg/builds/)  
+  - [macOS/Linux](https://www.ffmpeg.org/download.html)  
+  ⚠️ *After installation, make sure `ffmpeg` is added to your system's environment variables.*
 
+- **Ollama**  
+  [Install Ollama](https://ollama.com/) – used to run local language models.  
+  📌 *Ensure you pull a model that fits your GPU memory constraints.*
+
+---
+
+### 📥 Setup Instructions
+
+1. **Clone the repository**:
+```git clone git@github.com:zeri27/AI-LLP.git```
+2. **Install dependencies**:
+```pip install -r requirements.txt```
+
+---
+
+### 🚀 Usage
+
+1. Ensure a **stable internet connection** (especially for the TTS module — use version v1 if offline).
+2. Run the agent: ```python agent.py```
+
+---
